@@ -73,7 +73,13 @@ async def start_services():
     await idle()
 
 async def cleanup():
-    await server.cleanup()
+    try:
+        await asyncio.gather(
+            server.cleanup(),
+            StreamBot.stop()
+        )
+    except asyncio.CancelledError:
+        pass  # Handle cancellation gracefully
     await StreamBot.stop()
 
 if __name__ == "__main__":
